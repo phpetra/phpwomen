@@ -1,0 +1,7 @@
+parameters:
+#    php_women_site.example.class: PHPWomen\SiteBundle\Example
+
+services:
+#    php_women_site.example:
+#        class: %php_women_site.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

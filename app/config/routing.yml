@@ -1,0 +1,4 @@
+php_women_site:
+    resource: "@PHPWomenSiteBundle/Resources/config/routing.yml"
+    prefix:   /
+

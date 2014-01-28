@@ -1,0 +1,3 @@
+php_women_site_homepage:
+    pattern:  /
+    defaults: { _controller: PHPWomenSiteBundle:Default:index }

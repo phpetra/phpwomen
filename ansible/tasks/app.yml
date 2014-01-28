@@ -1,0 +1,19 @@
+---
+- name: app | Add PHP ini settings
+  template: src=files/php/extra-ini.tpl dest=/etc/php5/fpm/conf.d/extra.ini
+  notify: restart php5-fpm
+
+- name: app | Add PHP ini settings - cli
+  template: src=files/php/extra-ini.tpl dest=/etc/php5/cli/conf.d/extra.ini
+
+- name: app | Install Composer
+  shell: curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer creates=/usr/local/bin/composer
+
+- name: app | Create cache dirs on shared memory
+  file: path=/dev/shm/cache/dev state=directory mode=0777
+
+- name: app | Create logs dirs on shared memory
+  file: path=/dev/shm/logs state=directory mode=0777
+
+- name: app | Run Composer
+  shell: composer install chdir=/vagrant creates=/vagrant/vendor

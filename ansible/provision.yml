@@ -1,0 +1,20 @@
+---
+- hosts: all
+  sudo: true
+  vars:
+    doc_root: /vagrant/web
+    sys_packages: [ 'curl', 'vim', 'git']
+    php_packages: [ 'php5-curl', 'php5-cli', 'php-pear', 'php5-dev']
+    mysql_db: phpwomen
+    mysql_user: phpwomen
+    mysql_pass: phpwomen
+  tasks:
+    - include: tasks/init.yml
+    - include: tasks/nginxphp.yml
+    - include: tasks/mysql.yml
+    - include: tasks/app.yml
+  handlers:
+    - name: restart nginx
+      service: name=nginx state=restarted
+    - name: restart php5-fpm
+      service: name=php5-fpm state=restarted
