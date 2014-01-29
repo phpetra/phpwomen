@@ -21,10 +21,26 @@ class User extends BaseUser
      */
     protected $id;
 
-    public function __construct()
+    /**
+     * @ORM\OneToMany(targetEntity="PHPWomen\BlogBundle\Entity\Post", mappedBy="author")
+     **/
+    protected $posts;
+
+    /**
+     * @param mixed $posts
+     */
+    public function setPosts($posts)
     {
-        parent::__construct();
-        // your own logic
+        $this->posts = $posts;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getPosts()
+    {
+        return $this->posts;
+    }
+
 
 } 
