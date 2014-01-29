@@ -17,7 +17,7 @@ server {
         try_files $uri @rewriteapp;
     }
 
-        location @rewriteapp {
+    location @rewriteapp {
         rewrite ^(.*)$ /app.php/$1 last;
     }
 
