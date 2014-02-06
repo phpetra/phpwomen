@@ -1,7 +1,0 @@
-parameters:
-#    php_women_blog.example.class: PHPWomen\BlogBundle\Example
-
-services:
-#    php_women_blog.example:
-#        class: %php_women_blog.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]

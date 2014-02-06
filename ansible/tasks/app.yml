@@ -9,11 +9,14 @@
 - name: app | Install Composer
   shell: curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer creates=/usr/local/bin/composer
 
-- name: app | Create cache dirs on shared memory
-  file: path=/dev/shm/cache/dev state=directory mode=0777
+- name: app | Create cache dir on shared memory
+  file: path=/dev/shm/cache state=directory mode=0777 owner=vagrant group=vagrant
 
-- name: app | Create logs dirs on shared memory
-  file: path=/dev/shm/logs state=directory mode=0777
+- name: app | Create logs dir on shared memory
+  file: path=/dev/shm/logs state=directory mode=0777 owner=vagrant group=vagrant
+
+- name: app | Fix /var/lib/php5 permissions
+  file: path=/var/lib/php5 owner=root group=vagrant mode=0770
 
 - name: app | Run Composer
   shell: composer install chdir=/vagrant creates=/vagrant/vendor

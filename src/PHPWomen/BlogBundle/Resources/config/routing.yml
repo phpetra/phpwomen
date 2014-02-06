@@ -1,7 +1,0 @@
-php_women_blog_homepage:
-    pattern:  /blog
-    defaults: { _controller: PHPWomenBlogBundle:Default:index }
-
-php_women_admin_homepage:
-    pattern: /admin
-    defaults: { _controller: PHPWomenBlogBundle:Default:index }

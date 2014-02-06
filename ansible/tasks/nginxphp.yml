@@ -1,19 +1,25 @@
 ---
 - name: nginxphp | Install Nginx
-  sudo: yes
   apt: pkg=nginx state=latest
 
 - name: nginxphp | Install php5-fpm
-  sudo: yes
   apt: pkg=php5-fpm state=latest
 
+- name: nginxphp | Check default php5-fpm user
+  shell: grep -c 'www-data' /etc/php5/fpm/pool.d/www.conf
+  register: phpuser_check
+  ignore_errors: yes
+
+- name: nginxphp | Change default php5-fpm user
+  shell: sed -i 's/www-data/vagrant/' /etc/php5/fpm/pool.d/www.conf
+  when: phpuser_check > 0
+  notify: restart php5-fpm
+
 - name: nginxphp | Change default nginx site
-  sudo: yes
   template: src=files/nginx/default.tpl dest=/etc/nginx/sites-available/default
   notify: restart nginx
 
 - name: nginxphp | Install PHP Modules
-  sudo: yes
   apt: pkg={{ item }} state=latest
   with_items: php_packages
 
