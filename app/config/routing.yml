@@ -1,3 +1,7 @@
+php_women_admin:
+    resource: "@PHPWomenAdminBundle/Resources/config/routing.yml"
+    prefix:   /
+
 php_women_user:
     resource: "@PHPWomenUserBundle/Resources/config/routing.yml"
     prefix:   /

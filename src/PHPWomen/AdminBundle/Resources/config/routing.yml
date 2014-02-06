@@ -1,0 +1,3 @@
+php_women_admin_homepage:
+    pattern:  /admin/
+    defaults: { _controller: PHPWomenAdminBundle:Default:index }

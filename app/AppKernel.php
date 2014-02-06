@@ -20,6 +20,7 @@ class AppKernel extends Kernel
             new PHPWomen\BlogBundle\PHPWomenBlogBundle(),
             new PHPWomen\UserBundle\PHPWomenUserBundle(),
             new FOS\UserBundle\FOSUserBundle(),
+            new PHPWomen\AdminBundle\PHPWomenAdminBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

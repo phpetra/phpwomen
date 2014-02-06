@@ -1,0 +1,9 @@
+#public routes
+php_women_blog_homepage:
+    pattern:  /blog
+    defaults: { _controller: PHPWomenBlogBundle:Default:index }
+
+#admin routes
+php_women_admin_blog:
+    pattern: /admin/blog
+    defaults: { _controller: PHPWomenBlogBundle:Default:index }
