@@ -7,7 +7,9 @@ php_women_user:
     prefix:   /
 
 php_women_blog:
-    resource: "@PHPWomenBlogBundle/Resources/config/routing.yml"
+    #resource: "@PHPWomenBlogBundle/Resources/config/routing.yml"
+    resource: "@PHPWomenBlogBundle/Controller/"
+    type:     annotation
     prefix:   /
 
 php_women_site:

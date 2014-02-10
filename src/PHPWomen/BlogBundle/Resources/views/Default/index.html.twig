@@ -1,13 +1,33 @@
 {% extends 'PHPWomenAdminBundle::layout.html.twig' %}
 
+{% block stylesheets %}
+    <style type="text/css">
+        .post { margin: 1em; border-bottom: 1px dashed #cccccc;}
+    </style>
+{% endblock %}
+
 {% block content %}
-<!-- Main component for a primary marketing message or call to action -->
-<div class="jumbotron">
-    <h1>Navbar example</h1>
-    <p>This example is a quick exercise to illustrate how the default, static and fixed to top navbar work. It includes the responsive CSS and HTML, so it also adapts to your viewport and device.</p>
-    <p>To see the difference between static and fixed top navbars, just scroll.</p>
-    <p>
-        <a class="btn btn-lg btn-primary" href="../../components/#navbar" role="button">View navbar docs &raquo;</a>
-    </p>
-</div>
+    <div class="row">
+        <div class="col-md-8">
+            <h2>Latest blog entries</h2>
+
+            {% for post in posts %}
+            <div class="post">
+                <h3>{{ post.title }}</h3>
+                <p>post.intro</p>
+                <span class="post-author">{{ post.author }}</span>
+                <span class="post-date">date</span>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="col-md-4">
+            <h3>Sidbar with all sorts of options</h3>
+
+            <ul>
+                <li>What should be in here?</li>
+                <li>Tags, categories</li>
+                <li>List blog entries, latest x, per tag, per category</li>
+            </ul>
+        </div>
+    </div>
 {% endblock %}

@@ -78,4 +78,34 @@ class Category
         return $this->posts;
     }
 
-} 
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->posts = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add posts
+     *
+     * @param \PHPWomen\BlogBundle\Entity\Post $posts
+     * @return Category
+     */
+    public function addPost(\PHPWomen\BlogBundle\Entity\Post $posts)
+    {
+        $this->posts[] = $posts;
+
+        return $this;
+    }
+
+    /**
+     * Remove posts
+     *
+     * @param \PHPWomen\BlogBundle\Entity\Post $posts
+     */
+    public function removePost(\PHPWomen\BlogBundle\Entity\Post $posts)
+    {
+        $this->posts->removeElement($posts);
+    }
+}
