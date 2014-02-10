@@ -11,5 +11,6 @@ Want to join the project and contribute? Find us on IRC, Freenode: **#phpwomen**
 
 ##Development Notes
 
+- [Contributing Guidelines](https://github.com/phpwomen/phpwomen/wiki/Contributing-Guidelines)
 - [Bundles Organization](https://github.com/phpwomen/phpwomen/wiki/Bundles-Organization)
 - [Vagrant Instructions](https://github.com/phpwomen/phpwomen/wiki/Using-Vagrant)
