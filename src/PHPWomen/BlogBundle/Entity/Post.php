@@ -17,40 +17,45 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Post
 {
+
+    const STATUS_NEW        = 0;
+    const STATUS_PUBLISHED  = 1;
+    const STATUS_HIDDEN     = 2;
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    protected $id;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="PHPWomen\UserBundle\Entity\User", inversedBy="posts")
-     **/
-    protected $author;
+    private $id;
 
     /**
      * @ORM\Column(length=180)
      * @Assert\NotBlank()
-     * @Assert\Length({"min"=6})
      */
-    protected $title;
+    private $title;
 
     /**
      * @ORM\Column(length=200)
      * @Assert\NotBlank()
      */
-    protected $slug;
+    private $slug;
 
     /**
-     * @ORM\Column(length=255)
+     * @ORM\Column(length=255, nullable=true)
      */
-    protected $intro;
+    private $intro;
 
     /**
      * @ORM\Column(type="text")
      */
-    protected $text;
+    private $text;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="PHPWomen\UserBundle\Entity\User", inversedBy="posts")
+     * @Assert\Valid()
+     **/
+    private $author;
 
     /**
      * @var \DateTime
@@ -61,26 +66,43 @@ class Post
     private $date;
 
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="comments_allowed", type="integer", length=2, nullable=true)
+     * @Assert\Choice(choices = {0, 1}, message = "Select whether comments are allowed.")
+     */
+    private $commentsAllowed;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="status", type="integer", length=4)
+     * @Assert\Range(min=0, max=11)
+     */
+    private $status = self::STATUS_NEW;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="created_on", type="datetime")
      */
-    protected $createdOn;
+    private $createdOn;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="updated_on", type="datetime")
      */
-    protected $updatedOn;
+    private $updatedOn;
 
     /**
      * @var Category
      *
      * @ORM\ManyToOne(targetEntity="PHPWomen\BlogBundle\Entity\Category", inversedBy="posts")
      * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
+     *
      */
-    protected $category;
+    private $category;
 
     /**
      * @var Tag[] $tags
@@ -88,6 +110,15 @@ class Post
      * @ORM\ManyToMany(targetEntity="Tag", mappedBy="posts")
      */
     private $tags;
+
+    /**
+     * @var array Options for the status field
+     */
+    public static $statusOptions = array(
+        self::STATUS_NEW        => 'new',
+        self::STATUS_PUBLISHED  => 'published',
+        self::STATUS_HIDDEN     => 'hidden'
+    );
 
     /**
      * Get id
@@ -175,7 +206,7 @@ class Post
      * @param \DateTime $date
      * @return Post
      */
-    public function setDate(\DateTime $date)
+    public function setDate(\DateTime $date = null)
     {
         $this->date = $date;
 
@@ -334,4 +365,44 @@ class Post
     {
         return $this->slug;
     }
+
+    /**
+     * @param \DateTime $commentsAllowed
+     * @return Post
+     */
+    public function setCommentsAllowed($commentsAllowed)
+    {
+        $this->commentsAllowed = $commentsAllowed;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getCommentsAllowed()
+    {
+        return $this->commentsAllowed;
+    }
+
+    /**
+     * @param int $status
+     * @return Post
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+
 }

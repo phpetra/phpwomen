@@ -1,0 +1,21 @@
+{% extends 'PHPWomenAdminBundle::layout.html.twig' %}
+
+{% block stylesheets %}
+    <style type="text/css">
+        .post { margin: 1em; border-bottom: 1px dashed #cccccc;}
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-8">
+            <h2>Create a new blog post</h2>
+
+            {{ form(form) }}
+        </div>
+        <div class="col-md-4">
+            <h3>Side bar</h3>
+
+        </div>
+    </div>
+{% endblock %}
