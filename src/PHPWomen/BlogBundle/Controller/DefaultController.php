@@ -9,7 +9,12 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 /**
+ *
+ * All routes for te blog frontend
+ * Visible to the world
+ *
  * @Route("/blog")
+ *
  */
 class DefaultController extends Controller
 {
@@ -26,6 +31,7 @@ class DefaultController extends Controller
         $posts = $this->getDoctrine()
             ->getRepository('PHPWomen\BlogBundle\Entity\Post')
             ->findAll();
+
         return array(
             'posts'     => $posts
         );
@@ -50,7 +56,7 @@ class DefaultController extends Controller
         }
 
         var_dump($post); die;
-        
+
     }
 
     /**
@@ -64,31 +70,4 @@ class DefaultController extends Controller
 
     }
 
-    /**
-     * @Route("/create", name="blog-create")
-     * @Method({"GET", "POST"})
-     * Secure(roles="ROLE_BLOG_AUTHOR")
-     * @Template()
-     */
-    public function createAction()
-    {
-        $post = new Post();
-        $post->setTitle('The PHPwomen first blog post');
-        $post->setIntro('With a one line introduction');
-        $post->setAuthor();
-        $post->setText('Lorem ipsum dolor');
-
-
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($post);
-        $em->flush();
-
-        return $this->redirect($this->generateUrl('blog-latest'));
-
-        return new Response('Created post with id '. $post->getId());
-/*
-        return $this->render('PHPWomenAdminBundle:Blog:form.html.twig', array(
-            'form' => $form->createView()
-        ));*/
-    }
 }

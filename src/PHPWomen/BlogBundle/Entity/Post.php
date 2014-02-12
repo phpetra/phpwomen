@@ -8,6 +8,8 @@ namespace PHPWomen\BlogBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use PHPWomen\BlogBundle\Entity\Category;
 use PHPWomen\BlogBundle\Entity\Tag;
+use PHPWomen\BlogBundle\Model\Utils;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Table(name="blog_posts")
@@ -29,8 +31,16 @@ class Post
 
     /**
      * @ORM\Column(length=180)
+     * @Assert\NotBlank()
+     * @Assert\Length({"min"=6})
      */
     protected $title;
+
+    /**
+     * @ORM\Column(length=200)
+     * @Assert\NotBlank()
+     */
+    protected $slug;
 
     /**
      * @ORM\Column(length=255)
@@ -46,6 +56,7 @@ class Post
      * @var \DateTime
      *
      * @ORM\Column(name="date", type="date")
+     * @Assert\NotBlank()
      */
     private $date;
 
@@ -97,6 +108,7 @@ class Post
     public function setTitle($title)
     {
         $this->title = $title;
+        $this->slug = Utils::slugify($title);
 
         return $this;
     }
@@ -163,7 +175,7 @@ class Post
      * @param \DateTime $date
      * @return Post
      */
-    public function setDate($date)
+    public function setDate(\DateTime $date)
     {
         $this->date = $date;
 
@@ -311,5 +323,15 @@ class Post
     public function getTags()
     {
         return $this->tags;
+    }
+
+    /**
+     * Get slug
+     *
+     * @return string 
+     */
+    public function getSlug()
+    {
+        return $this->slug;
     }
 }
