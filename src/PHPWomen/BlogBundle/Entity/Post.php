@@ -6,10 +6,12 @@
 namespace PHPWomen\BlogBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use PHPWomen\BlogBundle\Entity\Category;
+use PHPWomen\BlogBundle\Entity\Tag;
 
 /**
- * @ORM\Entity
- * @ORM\Table(name="post")
+ * @ORM\Table(name="blog_posts")
+ * @ORM\Entity(repositoryClass="PHPWomen\BlogBundle\Entity\PostRepository")
  */
 class Post
 {
@@ -31,27 +33,50 @@ class Post
     protected $title;
 
     /**
+     * @ORM\Column(length=255)
+     */
+    protected $intro;
+
+    /**
      * @ORM\Column(type="text")
      */
     protected $text;
 
     /**
-     * @ORM\Column(length=140)
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date", type="date")
      */
-    protected $tags;
+    private $date;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Category", inversedBy="posts")
-     **/
-    protected $categories;
+     * @var \DateTime
+     *
+     * @ORM\Column(name="created_on", type="datetime")
+     */
+    protected $createdOn;
 
     /**
-     * Constructor
+     * @var \DateTime
+     *
+     * @ORM\Column(name="updated_on", type="datetime")
      */
-    public function __construct()
-    {
-        $this->categories = new \Doctrine\Common\Collections\ArrayCollection();
-    }
+    protected $updatedOn;
+
+    /**
+     * @var Category
+     *
+     * @ORM\ManyToOne(targetEntity="PHPWomen\BlogBundle\Entity\Category", inversedBy="posts")
+     * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
+     */
+    protected $category;
+
+    /**
+     * @var Tag[] $tags
+     *
+     * @ORM\ManyToMany(targetEntity="Tag", mappedBy="posts")
+     */
+    private $tags;
 
     /**
      * Get id
@@ -110,29 +135,6 @@ class Post
     }
 
     /**
-     * Set tags
-     *
-     * @param string $tags
-     * @return Post
-     */
-    public function setTags($tags)
-    {
-        $this->tags = $tags;
-
-        return $this;
-    }
-
-    /**
-     * Get tags
-     *
-     * @return string 
-     */
-    public function getTags()
-    {
-        return $this->tags;
-    }
-
-    /**
      * Set author
      *
      * @param \PHPWomen\UserBundle\Entity\User $author
@@ -156,35 +158,158 @@ class Post
     }
 
     /**
-     * Add categories
+     * Set date
      *
-     * @param \PHPWomen\BlogBundle\Entity\Category $categories
+     * @param \DateTime $date
      * @return Post
      */
-    public function addCategory(\PHPWomen\BlogBundle\Entity\Category $categories)
+    public function setDate($date)
     {
-        $this->categories[] = $categories;
+        $this->date = $date;
 
         return $this;
     }
 
     /**
-     * Remove categories
+     * Get date
      *
-     * @param \PHPWomen\BlogBundle\Entity\Category $categories
+     * @return \DateTime 
      */
-    public function removeCategory(\PHPWomen\BlogBundle\Entity\Category $categories)
+    public function getDate()
     {
-        $this->categories->removeElement($categories);
+        return $this->date;
     }
 
     /**
-     * Get categories
+     * Set createdOn
+     *
+     * @param \DateTime $createdOn
+     * @return Post
+     */
+    public function setCreatedOn($createdOn)
+    {
+        $this->createdOn = $createdOn;
+
+        return $this;
+    }
+
+    /**
+     * Get createdOn
+     *
+     * @return \DateTime 
+     */
+    public function getCreatedOn()
+    {
+        return $this->createdOn;
+    }
+
+    /**
+     * Set updatedOn
+     *
+     * @param \DateTime $updatedOn
+     * @return Post
+     */
+    public function setUpdatedOn($updatedOn)
+    {
+        $this->updatedOn = $updatedOn;
+
+        return $this;
+    }
+
+    /**
+     * Get updatedOn
+     *
+     * @return \DateTime 
+     */
+    public function getUpdatedOn()
+    {
+        return $this->updatedOn;
+    }
+
+    /**
+     * Set category
+     *
+     * @param \PHPWomen\BlogBundle\Entity\Category $category
+     * @return Post
+     */
+    public function setCategory(\PHPWomen\BlogBundle\Entity\Category $category = null)
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
+    /**
+     * Get category
+     *
+     * @return \PHPWomen\BlogBundle\Entity\Category 
+     */
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
+    /**
+     * Set intro
+     *
+     * @param string $intro
+     * @return Post
+     */
+    public function setIntro($intro)
+    {
+        $this->intro = $intro;
+
+        return $this;
+    }
+
+    /**
+     * Get intro
+     *
+     * @return string 
+     */
+    public function getIntro()
+    {
+        return $this->intro;
+    }
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->tags = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add tags
+     *
+     * @param \PHPWomen\BlogBundle\Entity\Tag $tags
+     * @return Post
+     */
+    public function addTag(\PHPWomen\BlogBundle\Entity\Tag $tags)
+    {
+        $this->tags[] = $tags;
+
+        return $this;
+    }
+
+    /**
+     * Remove tags
+     *
+     * @param \PHPWomen\BlogBundle\Entity\Tag $tags
+     */
+    public function removeTag(\PHPWomen\BlogBundle\Entity\Tag $tags)
+    {
+        $this->tags->removeElement($tags);
+    }
+
+    /**
+     * Get tags
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getCategories()
+    public function getTags()
     {
-        return $this->categories;
+        return $this->tags;
     }
 }

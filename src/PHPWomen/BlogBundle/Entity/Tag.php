@@ -1,6 +1,6 @@
 <?php
 /**
- * Category Entity
+ * Tag Entity
  */
 
 namespace PHPWomen\BlogBundle\Entity;
@@ -10,9 +10,9 @@ use PHPWomen\BlogBundle\Entity\Post;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="blog_categories")
+ * @ORM\Table(name="blog_tags")
  */
-class Category
+class Tag
 {
     /**
      * @ORM\Id
@@ -22,25 +22,25 @@ class Category
     protected $id;
 
     /**
-     * @ORM\Column(length=180)
+     * @ORM\Column(length=63)
      */
-    protected $name;
+    protected $tag;
 
     /**
-     * @ORM\OneToMany(targetEntity="\PHPWomen\BlogBundle\Entity\Post", mappedBy="category")
-     **/
-    protected $posts;
-
-    /**
-     * @param mixed $id
+     * @var Post[] $post
+     *
+     * @ORM\ManyToMany(targetEntity="Post", inversedBy="tags")
+     * @ORM\JoinTable(name="blog_posts_tags",
+     *          joinColumns={@ORM\JoinColumn(name="tag_id", referencedColumnName="id")},
+     *          inverseJoinColumns={@ORM\JoinColumn(name="post_id", referencedColumnName="id")}
+     *      )
      */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
+    private $posts;
 
     /**
-     * @return mixed
+     * Get id
+     *
+     * @return integer 
      */
     public function getId()
     {
@@ -48,35 +48,26 @@ class Category
     }
 
     /**
-     * @param mixed $name
+     * Set tag
+     *
+     * @param string $tag
+     * @return Tag
      */
-    public function setName($name)
+    public function setTag($tag)
     {
-        $this->name = $name;
+        $this->tag = $tag;
+
+        return $this;
     }
 
     /**
-     * @return mixed
+     * Get tag
+     *
+     * @return string 
      */
-    public function getName()
+    public function getTag()
     {
-        return $this->name;
-    }
-
-    /**
-     * @param mixed $posts
-     */
-    public function setPosts($posts)
-    {
-        $this->posts = $posts;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPosts()
-    {
-        return $this->posts;
+        return $this->tag;
     }
 
     /**
@@ -91,7 +82,7 @@ class Category
      * Add posts
      *
      * @param \PHPWomen\BlogBundle\Entity\Post $posts
-     * @return Category
+     * @return Tag
      */
     public function addPost(\PHPWomen\BlogBundle\Entity\Post $posts)
     {
@@ -108,5 +99,15 @@ class Category
     public function removePost(\PHPWomen\BlogBundle\Entity\Post $posts)
     {
         $this->posts->removeElement($posts);
+    }
+
+    /**
+     * Get posts
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPosts()
+    {
+        return $this->posts;
     }
 }

@@ -50,7 +50,7 @@ class DefaultController extends Controller
         }
 
         var_dump($post); die;
-        // ... do something, like pass the $post object into a template
+        
     }
 
     /**
@@ -73,10 +73,11 @@ class DefaultController extends Controller
     public function createAction()
     {
         $post = new Post();
-        $post->setTitle('A Foo Bar');
-        //$post->setAuthor();
+        $post->setTitle('The PHPwomen first blog post');
+        $post->setIntro('With a one line introduction');
+        $post->setAuthor();
         $post->setText('Lorem ipsum dolor');
-        $post->setTags('php, first');
+
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($post);
