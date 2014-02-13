@@ -44,14 +44,11 @@
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li class="active"><a href="#">Home</a></li>
-                <li><a href="#about">Posts</a></li>
-                <li><a href="#contact">Contact</a></li>
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Blog posts <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#">Action</a></li>
-                        <li><a href="#">Another action</a></li>
-                        <li><a href="#">Something else here</a></li>
+                        <li><a href="{{ path('blog-admin-index') }}" title="List of blog posts">Your posts</a></li>
+                        <li><a href="{{ path('blog-create') }}">New post</a></li>
                         <li class="divider"></li>
                         <li class="dropdown-header">Nav header</li>
                         <li><a href="#">Separated link</a></li>
@@ -60,9 +57,11 @@
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="../navbar/">Default</a></li>
-                <li><a href="../navbar-static-top/">Static top</a></li>
-                <li class="active"><a href="Default">Fixed top</a></li>
+                {% if is_granted('ROLE_EDITOR') %}
+                    <li><a href="{{ path('fos_user_security_logout') }}">log out</a></li>
+                {% else %}
+                    <li><a href="{{ path('fos_user_security_login') }}">log in</a></li>
+                {% endif %}
             </ul>
         </div><!--/.nav-collapse -->
     </div>

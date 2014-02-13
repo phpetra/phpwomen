@@ -24,19 +24,19 @@ use Symfony\Component\HttpFoundation\Request;
  * @package PHPWomen\BlogBundle\Controller
  * @Route("/blog/admin")
  *
- * @todo add the JMSSecurityExtraBundle to get this to work?
- * Secure(roles="ROLE_USER")
  */
 class AdminController extends Controller {
 
     /**
+     * List all blog posts for all users
+     *
      * @Route("/", name="blog-admin-index")
      * @Method({"GET", "POST"})
-     *
      * @Template()
      */
     public function indexAction()
     {
+        // $this->get('security.context')->isGranted('ROLE_ADMIN')
         $posts = $this->getDoctrine()
             ->getRepository('PHPWomen\BlogBundle\Entity\Post')
             ->findAll();
@@ -49,7 +49,6 @@ class AdminController extends Controller {
     /**
      * @Route("/create", name="blog-create")
      * @Method({"GET"})
-     * Secure(roles="ROLE_EDITOR")
      * @Template()
      */
     public function createAction()
@@ -70,7 +69,6 @@ class AdminController extends Controller {
     /**
      * @Route("/save", name="blog-save")
      * @Method({"POST"})
-     * Secure(roles="ROLE_EDITOR")
      * @Template()
      */
     public function saveAction(Request $request)
@@ -81,7 +79,6 @@ class AdminController extends Controller {
         $em = $this->getDoctrine()->getManager();
         $post = new Post();
 
-        // handy feature: $form->get('saveAndAdd')->isClicked();
 
         $form = $this->createForm(new PostType(), new Post());
         $form->handleRequest($request);
@@ -108,7 +105,6 @@ class AdminController extends Controller {
     /**
      * @Route("/createtest", name="blog-createtest")
      * @Method({"GET", "POST"})
-     * Secure(roles="ROLE_EDITOR")
      * @Template()
      */
     public function createDummyAction()
@@ -117,11 +113,13 @@ class AdminController extends Controller {
         $user = $this->getUser();
 
         $post = new Post();
-        $post->setTitle('The PHPwomen first blog post');
+        $post->setTitle('Another blog post');
         $post->setIntro('With a one line introduction');
         $post->setAuthor($user);
-        $post->setCreatedOn(new \DateTime('now'));
-        $post->setUpdatedOn(new \DateTime('now'));
+        $date = new \DateTime();
+            $date->format('Y-m-d H:i:s');
+        $post->setCreatedOn($date);
+        $post->setUpdatedOn($date);
         $post->setText('Lorem ipsum dolor');
         $post->setDate(new \DateTime());
         //$post->setStatus(2);
@@ -132,9 +130,7 @@ class AdminController extends Controller {
         $em->persist($post);
         $em->flush();
 
-        //return $this->redirect($this->generateUrl('blog-latest'));
-
-        return new Response('Created post with id '. $post->getId());
-
+        return $this->redirect($this->generateUrl('blog-latest'));
     }
+
 } 
