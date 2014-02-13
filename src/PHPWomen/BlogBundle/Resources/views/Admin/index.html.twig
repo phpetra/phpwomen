@@ -10,15 +10,39 @@
     <div class="row">
         <div class="col-md-10">
             <h2>All blog posts</h2>
-            <h3 class="btn-danger">@todo put them in a dataTable</h3>
 
-            {% for post in posts %}
-                <div class="post">
-                    <h3>{{ post.title }}</h3>
-                    <span class="post-author">{{ post.author }}</span>
-                    <span class="post-date">{{ post.date|date("Y-m-d") }}</span>
-                </div>
-            {% endfor %}
+            <table class="table table-condensed table-bordered table-striped table-hover">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Title</th>
+                    <th>date</th>
+                    <th>Author</th>
+                    <th>Category</th>
+                    <th>Options</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                {% for post in posts %}
+                    <tr>
+                        <td>{{ post.id }}</td>
+                        <td>{{ post.title }}</td>
+                        <td>{{ post.date|date("Y-m-d") }}</td>
+                        <td>{{ post.author }}</td>
+                        <td>{% if post.category is not empty %}
+                                {{ post.category.name }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="label label-danger">Publish</span>
+                            <span class="label label-success">Hide</span>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
         </div>
         <div class="col-md-2">
 

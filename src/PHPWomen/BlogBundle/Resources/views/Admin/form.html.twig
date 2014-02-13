@@ -2,17 +2,46 @@
 
 {% block stylesheets %}
     <style type="text/css">
-        .post { margin: 1em; border-bottom: 1px dashed #cccccc;}
+        input.phpw-input-small, select.phpw-input-small { width: 100px; }
+        input.phpw-input-auto, select.phpw-input-auto { width: auto; }
+        textarea.phpw-textarea-big { height: 200px; }
     </style>
 {% endblock %}
 
 {% block content %}
     <div class="row">
         <div class="col-md-8">
+
             <h2>Create a new blog post</h2>
 
-            {{ form(form) }}
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'class': 'form-horizontal well'}}) }}
+
+            {{ form_row(form.title) }}
+
+            {{ form_row(form.intro) }}
+
+            {{ form_row(form.text) }}
+
+            {{ form_row(form.date) }}
+
+            {{ form_row(form.status) }}
+
+            {{ form_row(form.commentsAllowed) }}
+
+            {{ form_widget(form.categoryChoice) }}
+
+            {{ form_widget(form.category) }}
+
+            <div class="form-group">
+                <div class="col-lg-offset-3 col-lg-9">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <a href="{{ path('blog-admin-index') }}" class="btn btn-danger">Cancel</a>
+                </div>
+            </div>
+
+            {{ form_end(form) }}
         </div>
+
         <div class="col-md-4">
             <h3>Side bar</h3>
 

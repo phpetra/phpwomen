@@ -7,6 +7,7 @@ namespace PHPWomen\BlogBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use PHPWomen\BlogBundle\Entity\Post;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
@@ -23,11 +24,19 @@ class Category
 
     /**
      * @ORM\Column(length=180)
+     * @Assert\NotBlank()
+     * @Assert\Length(
+     *      min = "2",
+     *      max = "60",
+     *      minMessage = "The category name must be at least {{ limit }} characters long.",
+     *      maxMessage = "The category name can not be longer than {{ limit }} characters."
+     * )
      */
     protected $name;
 
     /**
      * @ORM\OneToMany(targetEntity="\PHPWomen\BlogBundle\Entity\Post", mappedBy="category")
+     * @Assert\Valid()
      **/
     protected $posts;
 
@@ -109,4 +118,10 @@ class Category
     {
         $this->posts->removeElement($posts);
     }
+
+    public function __toString()
+    {
+        return 'phpwomen-blog-category';
+    }
+
 }

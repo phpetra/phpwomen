@@ -32,6 +32,12 @@ class Post
     /**
      * @ORM\Column(length=180)
      * @Assert\NotBlank()
+     * @Assert\Length(
+     *      min = "2",
+     *      max = "180",
+     *      minMessage = "The title must be at least {{ limit }} characters long.",
+     *      maxMessage = "The title can not be longer than {{ limit }} characters."
+     * )
      */
     private $title;
 
@@ -48,6 +54,7 @@ class Post
 
     /**
      * @ORM\Column(type="text")
+     * @Assert\NotBlank()
      */
     private $text;
 
@@ -62,6 +69,7 @@ class Post
      *
      * @ORM\Column(name="date", type="date")
      * @Assert\NotBlank()
+     * @Assert\Date()
      */
     private $date;
 
@@ -85,6 +93,7 @@ class Post
      * @var \DateTime
      *
      * @ORM\Column(name="created_on", type="datetime")
+     * @Assert\DateTime()
      */
     private $createdOn;
 
@@ -92,17 +101,20 @@ class Post
      * @var \DateTime
      *
      * @ORM\Column(name="updated_on", type="datetime")
+     * @Assert\DateTime()
      */
     private $updatedOn;
 
     /**
      * @var Category
      *
-     * @ORM\ManyToOne(targetEntity="PHPWomen\BlogBundle\Entity\Category", inversedBy="posts")
+     * @ORM\ManyToOne(targetEntity="PHPWomen\BlogBundle\Entity\Category", inversedBy="posts", cascade={"persist"})
      * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
-     *
+     * @Assert\Valid()
      */
     private $category;
+
+    private $categoryChoice = null;
 
     /**
      * @var Tag[] $tags
@@ -271,13 +283,18 @@ class Post
 
     /**
      * Set category
+     * If a category was selected from the choice select, that one has precedence
      *
      * @param \PHPWomen\BlogBundle\Entity\Category $category
      * @return Post
      */
     public function setCategory(\PHPWomen\BlogBundle\Entity\Category $category = null)
     {
-        $this->category = $category;
+        if ($this->categoryChoice) {
+            $this->category = $this->categoryChoice;
+        } else {
+            $this->category = $category;
+        }
 
         return $this;
     }
@@ -402,6 +419,25 @@ class Post
     public function getStatus()
     {
         return $this->status;
+    }
+
+    /**
+     * @param null $categoryChoice
+     * @return Post
+     */
+    public function setCategoryChoice($categoryChoice)
+    {
+        $this->categoryChoice = $categoryChoice;
+
+        return $this;
+    }
+
+    /**
+     * @return null
+     */
+    public function getCategoryChoice()
+    {
+        return $this->categoryChoice;
     }
 
 

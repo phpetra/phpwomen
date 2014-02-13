@@ -7,6 +7,7 @@ namespace PHPWomen\BlogBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use PHPWomen\BlogBundle\Entity\Post;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
