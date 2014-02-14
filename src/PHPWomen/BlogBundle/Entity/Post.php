@@ -114,7 +114,7 @@ class Post
      */
     private $category;
 
-    private $categoryChoice = null;
+    private $categoryNew = null;
 
     /**
      * @var Tag[] $tags
@@ -290,11 +290,7 @@ class Post
      */
     public function setCategory(\PHPWomen\BlogBundle\Entity\Category $category = null)
     {
-        if ($this->categoryChoice) {
-            $this->category = $this->categoryChoice;
-        } else {
-            $this->category = $category;
-        }
+        $this->category = $category;
 
         return $this;
     }
@@ -422,12 +418,12 @@ class Post
     }
 
     /**
-     * @param null $categoryChoice
+     * @param null $categoryNew
      * @return Post
      */
-    public function setCategoryChoice($categoryChoice)
+    public function setCategoryNew($categoryNew)
     {
-        $this->categoryChoice = $categoryChoice;
+        $this->categoryNew = $categoryNew;
 
         return $this;
     }
@@ -435,9 +431,9 @@ class Post
     /**
      * @return null
      */
-    public function getCategoryChoice()
+    public function getCategoryNew()
     {
-        return $this->categoryChoice;
+        return $this->categoryNew;
     }
 
 

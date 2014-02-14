@@ -9,7 +9,7 @@
 {% block content %}
     <div class="row">
         <div class="col-md-10">
-            <h2>All blog posts</h2>
+            <h2>{{ header }}</h2>
 
             <table class="table table-condensed table-bordered table-striped table-hover">
                 <thead>
@@ -19,6 +19,8 @@
                     <th>date</th>
                     <th>Author</th>
                     <th>Category</th>
+                    <th>Created</th>
+                    <th>Updated</th>
                     <th>Options</th>
                 </tr>
                 </thead>
@@ -27,16 +29,22 @@
                 {% for post in posts %}
                     <tr>
                         <td>{{ post.id }}</td>
-                        <td>{{ post.title }}</td>
-                        <td>{{ post.date|date("Y-m-d") }}</td>
+                        <td><a href="{{ path('blog-edit-post', {'id': post.id }) }}" title="Edit this entry">{{ post.title }}</a></td>
+                        <td>{{ post.date|date("d-m-Y") }}</td>
                         <td>{{ post.author }}</td>
                         <td>{% if post.category is not empty %}
                                 {{ post.category.name }}
                             {% endif %}
                         </td>
+                        <td>{{ post.createdOn|date("d-m-Y H:i:s") }}</td>
+                        <td>{{ post.updatedOn|date("d-m-Y H:i:s") }}</td>
                         <td>
-                            <span class="label label-danger">Publish</span>
-                            <span class="label label-success">Hide</span>
+                            {% if post.status == constant('PHPWomen\\BlogBundle\\Entity\\Post::STATUS_PUBLISHED') %}
+                                <a href="{{ path('blog-publish-post', {'id': post.id, 'status': 0 }) }}" title="Hide on the site"><span class="label label-success">Hide</span></a>
+                            {% else %}
+                                <a href="{{ path('blog-publish-post', {'id': post.id, 'status': 1 }) }}" title="Publish on the site"><span class="label label-default">Publish</span></a>
+                            {% endif %}
+                            <a href="{{ path('blog-delete-post', {'id': post.id }) }}" title="Delete this post"><span class="label label-danger">Delete</span></a>
                         </td>
                     </tr>
                 {% endfor %}

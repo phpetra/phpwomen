@@ -12,7 +12,7 @@
     <div class="row">
         <div class="col-md-8">
 
-            <h2>Create a new blog post</h2>
+            <h2>{{ header }}</h2>
 
             {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'class': 'form-horizontal well'}}) }}
 
@@ -24,13 +24,15 @@
 
             {{ form_row(form.date) }}
 
-            {{ form_row(form.status) }}
+            {% if form.status is defined %}
+                {{ form_row(form.status) }}
+            {% endif %}
 
             {{ form_row(form.commentsAllowed) }}
 
-            {{ form_widget(form.categoryChoice) }}
+            {{ form_row(form.category) }}
 
-            {{ form_widget(form.category) }}
+            {{ form_widget(form.categoryNew) }}
 
             <div class="form-group">
                 <div class="col-lg-offset-3 col-lg-9">

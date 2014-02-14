@@ -55,12 +55,11 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Blog posts <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li><a href="{{ path('blog-admin-index') }}" title="List of blog posts">Your posts</a></li>
-                        <li><a href="{{ path('blog-create') }}">New post</a></li>
-                        <li class="divider"></li>
-                        <li class="dropdown-header">Nav header</li>
-                        <li><a href="#">Separated link</a></li>
-                        <li><a href="#">One more separated link</a></li>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <li><a href="{{ path('blog-admin-all') }}" title="List of everyone's posts">All posts</a></li>
+                        {% endif %}
+                        <li><a href="{{ path('blog-admin-index') }}" title="List of your blog posts">Your posts</a></li>
+                        <li><a href="{{ path('blog-new-post') }}" title="Create a new entry">New post</a></li>
                     </ul>
                 </li>
             </ul>

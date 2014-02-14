@@ -1,20 +1,19 @@
 <?php
-/**
- * User: PHPetra
- * Date: 2/12/14
- * Time: 5:42 PM
- * 
- */
 
 namespace PHPWomen\BlogBundle\Controller;
 
+use Doctrine\Common\Proxy\Exception\InvalidArgumentException;
+use Doctrine\Common\Util\Debug;
 use PHPWomen\BlogBundle\Entity\Post;
 use PHPWomen\BlogBundle\Entity\PostType;
+use PHPWomen\BlogBundle\Entity\Tag;
+use PHPWomen\BlogBundle\Exception\UserNotAllowedException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 /**
  * Class AdminPostController
@@ -30,63 +29,120 @@ class AdminController extends Controller {
     /**
      * List all blog posts for all users
      *
-     * @Route("/", name="blog-admin-index")
-     * @Method({"GET", "POST"})
-     * @Template()
+     * @Route("/all", name="blog-admin-all")
+     * @Method({"GET"})
+     * @Template("PHPWomenBlogBundle:Admin:index.html.twig")
      */
-    public function indexAction()
+    public function indexAllAction()
     {
-        // $this->get('security.context')->isGranted('ROLE_ADMIN')
-        $posts = $this->getDoctrine()
-            ->getRepository('PHPWomen\BlogBundle\Entity\Post')
-            ->findAll();
+        if (!$this->get('security.context')->isGranted('ROLE_ADMIN')) {
+            throw new UnauthorizedHttpException('Sorry but you do not have access to that page');
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $posts = $em->getRepository('PHPWomenBlogBundle:Post')->findAll();
 
         return array(
+            'header'    => 'All blog posts',
             'posts'     => $posts
         );
     }
 
     /**
-     * @Route("/create", name="blog-create")
+     * List blog posts for current user
+     *
+     * @Route("/", name="blog-admin-index")
      * @Method({"GET"})
      * @Template()
      */
-    public function createAction()
+    public function indexAction()
+    {
+        $posts = $this->getDoctrine()
+            ->getRepository('PHPWomen\BlogBundle\Entity\Post')
+            ->findBy(array('author' => $this->getUser()));
+
+        return array(
+            'header'    => 'Your blog posts',
+            'posts'     => $posts
+        );
+    }
+
+    /**
+     * Display form to create new Post
+     *
+     * @Route("/new", name="blog-new-post")
+     * @Method({"GET"})
+     * @Template()
+     */
+    public function newAction()
     {
         $post = new Post();
         $post->setDate(new \DateTime('today'));
 
         $form = $this->createForm(new PostType(), $post, array(
-            'action' => $this->generateUrl('blog-save'),
+            'action' => $this->generateUrl('blog-create-post'),
         ));
 
         return $this->render(
             'PHPWomenBlogBundle:Admin:form.html.twig',
-            array('form' => $form->createView())
+            array(
+                'header' => 'Write a new blog post',
+                'form' => $form->createView())
         );
     }
 
     /**
-     * @Route("/save", name="blog-save")
-     * @Method({"POST"})
+     * Display edit form
+     *
+     * @Route("/edit/{id}", name="blog-edit-post")
+     * @Method("GET")
      * @Template()
      */
-    public function saveAction(Request $request)
+    public function editAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $post = $em->getRepository('PHPWomenBlogBundle:Post')->find($id);
+        if (!$post) {
+            throw $this->createNotFoundException('Unable to find Post entity.');
+        }
+        $this->isUserAllowed($post);
+
+        $form = $this->createForm(new PostType(), $post, array(
+            'action' => $this->generateUrl('blog-update-post', array('id' => $post->getId())),
+        ));
+
+        return $this->render(
+            'PHPWomenBlogBundle:Admin:form.html.twig',
+            array(
+                'form' => $form->createView(),
+                'header' => 'Edit the blog post'
+            )
+        );
+    }
+
+    /**
+     * Creates a new blog post
+     *
+     * @Route("/create", name="blog-create-post")
+     * @Method({"POST"})
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     */
+    public function createAction(Request $request)
     {
         /** @var \PHPWomen\UserBundle\Entity\User $user */
         $user = $this->getUser();
-
         $em = $this->getDoctrine()->getManager();
+
         $post = new Post();
 
-
-        $form = $this->createForm(new PostType(), new Post());
+        $form = $this->createForm(new PostType(), $post);
         $form->handleRequest($request);
         if ($form->isValid()) {
             $post = $form->getData();
 
             $post->setAuthor($user);
-            // todo distinguish between create or insert, based on id
             $post->setCreatedOn(new \DateTime('now'));
             $post->setUpdatedOn(new \DateTime('now'));
 
@@ -98,39 +154,136 @@ class AdminController extends Controller {
 
         return $this->render(
             'PHPWomenBlogBundle:Admin:form.html.twig',
-            array('form' => $form->createView())
+            array(
+                'header' => 'Error creating the post',
+                'form' => $form->createView()
+            )
         );
     }
 
     /**
-     * @Route("/createtest", name="blog-createtest")
-     * @Method({"GET", "POST"})
+     * @Route("/update/{id}", name="blog-update-post", requirements={"id" = "\d+"})
+     * @Method({"POST"})
+     * @param $id
      * @Template()
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function createDummyAction()
+    public function updateAction($id = null, Request $request)
     {
         /** @var \PHPWomen\UserBundle\Entity\User $user */
         $user = $this->getUser();
-
-        $post = new Post();
-        $post->setTitle('Another blog post');
-        $post->setIntro('With a one line introduction');
-        $post->setAuthor($user);
-        $date = new \DateTime();
-            $date->format('Y-m-d H:i:s');
-        $post->setCreatedOn($date);
-        $post->setUpdatedOn($date);
-        $post->setText('Lorem ipsum dolor');
-        $post->setDate(new \DateTime());
-        //$post->setStatus(2);
-        $post->setCommentsAllowed(false);
-
-
         $em = $this->getDoctrine()->getManager();
-        $em->persist($post);
-        $em->flush();
 
-        return $this->redirect($this->generateUrl('blog-latest'));
+        $post = $em->getRepository('PHPWomenBlogBundle:Post')->find($id);
+        if (!$post) {
+            throw $this->createNotFoundException('Unable to find Post entity.');
+        }
+
+        $this->isUserAllowed($post);
+
+        $form = $this->createForm(new PostType(), $post);
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            $post = $form->getData();
+
+            $post->setUpdatedOn(new \DateTime('now'));
+
+            $em->flush();
+
+// todo set flash message
+            return $this->redirect($this->generateUrl('blog-admin-index'));
+        }
+
+        return $this->render(
+            'PHPWomenBlogBundle:Admin:form.html.twig',
+            array(
+                'header' => 'Error updating the post',
+                'form' => $form->createView()
+            )
+        );
     }
 
-} 
+    /**
+     * If admin, user has rights
+     * If not an admin, this checks if the post belongs to the user.
+     *
+     * @param $post
+     * @return bool
+     * @throws \PHPWomen\BlogBundle\Exception\UserNotAllowedException
+     */
+    protected function isUserAllowed($post)
+    {
+        if ($this->get('security.context')->isGranted('ROLE_ADMIN')) {
+            return true;
+        }
+        // if not admin, check that the post belongs to this user
+        if ($this->getUser() == $post->getAuthor()) {
+            return true;
+        }
+
+        throw new UserNotAllowedException('Sorry the user is not the author');
+    }
+
+    /**
+     * Deletes a post
+     *
+     * @Route("/delete/{id}", name="blog-delete-post", requirements={"id" = "\d+"})
+     * @Method({"GET","POST"})
+     * @Template()
+     * @param $id
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     */
+    public function deleteAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $post = $em->getRepository('PHPWomenBlogBundle:Post')->find($id);
+        if (!$post) {
+            throw $this->createNotFoundException('Unable to find the post.');
+        }
+
+        $this->isUserAllowed($post);
+
+        $em->remove($post);
+        $em->flush();
+
+        // todo set flash message
+        return $this->redirect($this->generateUrl('blog-admin-index'));
+    }
+
+    /**
+     * Publish / hide a post
+     *
+     * @Route("/publish/{id}/{status}", name="blog-publish-post", requirements={"id" = "\d+", "status" = "\d+"})
+     * @Method({"GET","POST"})
+     * @Template()
+     * @param $id integer
+     * @param $status integer
+     * @throws \Doctrine\Common\Proxy\Exception\InvalidArgumentException
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function publishAction($id, $status)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $post = $em->getRepository('PHPWomenBlogBundle:Post')->find($id);
+        if (!$post) {
+            throw $this->createNotFoundException('Unable to find the post.');
+        }
+
+        $this->isUserAllowed($post);
+        if (!array_key_exists($status, Post::$statusOptions)) {
+            throw new InvalidArgumentException("Incorrect status received");
+        }
+        $post->setStatus($status);
+        $em->flush();
+
+        // todo set flash message
+        return $this->redirect($this->generateUrl('blog-admin-index'));
+    }
+
+}

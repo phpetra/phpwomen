@@ -25,7 +25,7 @@ class Tag
     /**
      * @ORM\Column(length=63)
      */
-    protected $tag;
+    protected $name;
 
     /**
      * @var Post[] $post
@@ -49,14 +49,14 @@ class Tag
     }
 
     /**
-     * Set tag
+     * Set name
      *
-     * @param string $tag
+     * @param string $name
      * @return Tag
      */
-    public function setTag($tag)
+    public function setName($name)
     {
-        $this->tag = $tag;
+        $this->name = $name;
 
         return $this;
     }
@@ -66,9 +66,9 @@ class Tag
      *
      * @return string 
      */
-    public function getTag()
+    public function getName()
     {
-        return $this->tag;
+        return $this->name;
     }
 
     /**
