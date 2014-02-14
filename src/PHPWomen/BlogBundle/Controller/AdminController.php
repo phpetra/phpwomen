@@ -149,6 +149,11 @@ class AdminController extends Controller {
             $em->persist($post);
             $em->flush();
 
+            $this->get('session')->getFlashBag()->add(
+                'notice',
+                'The post was created!'
+            );
+
             return $this->redirect($this->generateUrl('blog-admin-index'));
         }
 
@@ -187,12 +192,15 @@ class AdminController extends Controller {
         $form->handleRequest($request);
         if ($form->isValid()) {
             $post = $form->getData();
-
             $post->setUpdatedOn(new \DateTime('now'));
 
             $em->flush();
 
-// todo set flash message
+            $this->get('session')->getFlashBag()->add(
+                'notice',
+                'Your changes were saved!'
+            );
+
             return $this->redirect($this->generateUrl('blog-admin-index'));
         }
 
@@ -218,7 +226,6 @@ class AdminController extends Controller {
         if ($this->get('security.context')->isGranted('ROLE_ADMIN')) {
             return true;
         }
-        // if not admin, check that the post belongs to this user
         if ($this->getUser() == $post->getAuthor()) {
             return true;
         }
@@ -250,7 +257,11 @@ class AdminController extends Controller {
         $em->remove($post);
         $em->flush();
 
-        // todo set flash message
+        $this->get('session')->getFlashBag()->add(
+            'notice',
+            'The post is deleted!'
+        );
+
         return $this->redirect($this->generateUrl('blog-admin-index'));
     }
 

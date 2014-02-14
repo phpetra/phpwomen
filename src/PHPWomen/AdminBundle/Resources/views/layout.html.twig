@@ -74,6 +74,12 @@
     </div>
 </div>
 
+{% for flashMessage in app.session.flashbag.get('notice') %}
+    <div class="flash-notice alert alert-success">
+        {{ flashMessage }}
+    </div>
+{% endfor %}
+
 <div class="container" style="padding-top: 70px">
 
     {% block content %}
