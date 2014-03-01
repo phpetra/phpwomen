@@ -1,0 +1,31 @@
+{% extends 'PHPWomenAdminBundle::layout.html.twig' %}
+
+{% block stylesheets %}
+    <style type="text/css">
+        .post { margin: 1em; border-bottom: 1px dashed #cccccc;}
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-8">
+            <div class="post">
+                <h2>{{ post.title }}</h2>
+                <p class="intro">{{ post.intro|e }}</p>
+                <p class="body">{{ post.text|e }}</p>
+                <hr>
+                <span class="author">Posted by: <a href="{{ path('blog-posts-by-user', {'username': post.author.usernameCanonical }) }}" title="More posts by this user">{{ post.author }}</a></span>
+                <span class="date">On: {{ post.date|date("d-m-Y") }}</span>
+                <span class="date">Category: {{ post.category }}</span>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            {{ render(controller('PHPWomenBlogBundle:Default:listCategories', {
+                'max': 10
+                }
+            )) }}
+        </div>
+
+    </div>
+{% endblock %}

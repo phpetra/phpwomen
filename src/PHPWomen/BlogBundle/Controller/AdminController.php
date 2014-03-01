@@ -42,6 +42,9 @@ class AdminController extends Controller {
         $em = $this->getDoctrine()->getManager();
         $posts = $em->getRepository('PHPWomenBlogBundle:Post')->findAll();
 
+        /*$date = new \DateTime('today 18:16:50');
+        $posts = $em->getRepository('PHPWomenBlogBundle:Post')->fetchLatestPosts($date);*/
+
         return array(
             'header'    => 'All blog posts',
             'posts'     => $posts
@@ -200,6 +203,9 @@ class AdminController extends Controller {
                 'notice',
                 'Your changes were saved!'
             );
+
+            // $request->getSession()->getFlashBag()->set('notice', 'Message sent!');
+            //return new RedirectResponse($this->generateUrl('_demo'));
 
             return $this->redirect($this->generateUrl('blog-admin-index'));
         }

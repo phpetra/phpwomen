@@ -1,0 +1,11 @@
+
+<h3>Categories</h3>
+<ul>
+    {% for category in categories %}
+    <li>
+        <a href="{{ path('blog-posts-by-category', {'category': category.name }) }}" title="Posts for this category">
+            {{ category.name }}
+        </a>
+    </li>
+    {% endfor %}
+</ul>

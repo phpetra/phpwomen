@@ -15,26 +15,55 @@ class PostRepository extends EntityRepository
     /**
      * Get latest blog posts
      *
-     * @param int $limit
-     * @param int $offset
+     * @param null $limit
+     * @param null $offset
      * @return array
      */
-    public function fetchLatestPosts($limit, $offset)
+    public function fetchLatestPosts($limit = null, $offset = null)
     {
-        $q = $this->createQueryBuilder('b')
-            ->orderBy('b.publishedOn', 'DESC')
-            ->setMaxResults($limit)
-            ->setFirstResult($offset)
+        $q = $this->createQueryBuilder('p')
+            ->where('p.status = :status')
+            ->orderBy('p.date', 'DESC')
+            ->setParameter('status', Post::STATUS_PUBLISHED)
             ->getQuery();
+
+        if ($limit) {
+            $q->setMaxResults($limit)
+                ->setFirstResult($offset);
+        }
 
         $q->execute();
 
         return $q->getResult();
     }
 
-    public function fetchPostsByCategory($category, $limit, $offset)
+    /**
+     *
+     * @param Category $category
+     * @param null $limit
+     * @param null $offset
+     * @return array
+     */
+    public function fetchPostsByCategoryName($category, $limit = null, $offset = null)
     {
+        $q = $this->createQueryBuilder('p')
+            ->innerJoin('PHPWomenBlogBundle:Category', 'c')
+            ->where('c.id = p.category')
+      //      ->where('p.status = :status')
+//            ->where('c.name = :cat')
+            ->orderBy('p.date', 'DESC')
+    //        ->setParameter('status', Post::STATUS_PUBLISHED)
+  //          ->setParameter('cat', $category)
+            ->getQuery();
 
+        if ($limit) {
+            $q->setMaxResults($limit)
+                ->setFirstResult($offset);
+        }
+
+        $q->execute();
+
+        return $q->getResult();
     }
 
     public function fetchPostsByAuthor($author, $limit, $offset)
@@ -49,9 +78,10 @@ class PostRepository extends EntityRepository
      * @return Post[]
      */
     public function fetchPostsByStatus(array $status) {
-        $qb = $this->createQueryBuilder('b');
+        $qb = $this->createQueryBuilder('p');
         $q = $qb
-            ->where($qb->expr()->in('b.status', $status))
+            ->where($qb->expr()->in('p.status', $status))
+            ->orderBy('p.date', 'desc')
             ->getQuery();
 
         $q->execute();
@@ -68,13 +98,13 @@ class PostRepository extends EntityRepository
      */
     public function fetchPostsBetweenDates(\DateTime $start, \DateTime $end)
     {
-        $q = $this->createQueryBuilder('b')
+        $q = $this->createQueryBuilder('p')
             ->where('date >= :start')
             ->orWhere(':date <= :end')
 
             ->setParameter('start', $start)
             ->setParameter('end', $end)
-            ->orderBy('b.id', 'ASC')
+            ->orderBy('p.date', 'desc')
             ->getQuery();
 
         $q->execute();

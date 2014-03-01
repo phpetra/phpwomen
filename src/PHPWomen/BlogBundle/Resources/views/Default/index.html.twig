@@ -9,25 +9,22 @@
 {% block content %}
     <div class="row">
         <div class="col-md-8">
-            <h2>Latest blog entries</h2>
+            <h2>Latest entries {% if category is defined %} for category {{ category }} {% endif %}</h2>
 
             {% for post in posts %}
-                <div class="post">
+            <a href="{{ path('blog-show-post', {'slug': post.slug }) }}" title="Read the entire post">
+                <div class="post-list">
                     <h3>{{ post.title }}</h3>
-                    <p>post.intro</p>
-                    <span class="post-author">{{ post.author }}</span>
-                    <span class="post-date">date</span>
+                    <p class="intro">{{ post.intro|e }}</p>
+                    <span class="author">{{ post.author }}</span>
+                    <span class="date">{{ post.date|date("d-m-Y") }}</span>
                 </div>
+            </a>
             {% endfor %}
         </div>
-        <div class="col-md-4">
-            <h3>Sidebar with all sorts of options</h3>
 
-            <ul>
-                <li>What should be in here?</li>
-                <li>Tags, categories</li>
-                <li>List blog entries, latest x, per tag, per category</li>
-            </ul>
+        <div class="col-md-4">
+            {{ render(controller('PHPWomenBlogBundle:Default:listCategories')) }}
         </div>
     </div>
 {% endblock %}
